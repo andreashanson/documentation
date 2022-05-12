@@ -8,7 +8,5 @@ dbmate new <migration_name> //example dbmate new initial
 dbmate --url "postgres://postgres:abc@localhost:5432/<db_name>?sslmode=disable" up
 dbmate --url "postgres://postgres:abc@localhost:5432/<db_name>?search_path=<schema>&sslmode=disable" up
 
-
-
 ## Run migrations down
 dbmate --url "postgres://postgres:abc@localhost:5432/<db_name>?sslmode=disable" down
