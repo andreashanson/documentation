@@ -1,0 +1,62 @@
+Create a PAT (Personal Access Token) with write:packages
+export PAT=your_personal_access_token
+
+login to github docker registry
+echo $PAT | docker login ghcr.io -u andreashanson --password-stdin
+
+Tag your image so it rhymes with the url it shall be pulled from.
+docker tag golang-rabbit ghcr.io/andreashanson/golan-rabbit/golang-rabbit:1.0.0
+
+Push a local docker image that you have built with the tagname you just created.
+docker push ghcr.io/andreashanson/golan-rabbit/golang-rabbit:1.0.0
+
+Create a PAT (Personal Access Token) with read:packages
+
+Create .dockerconfigjson
+
+username:pat where username is your github username.
+
+Base64 encode it.
+echo -n "username:pat" | base64
+
+Create a .dockerconfigjson 
+
+{
+    "auths":
+    {
+        "ghcr.io":
+            {
+                "auth":"dXNlcm5hbWU6MTIzMTIzYWRzZmFzZGYxMjMxMjM="
+            }
+    }
+}
+
+echo -n '{"auths":{balbalba}}' | base64
+
+Create a Secret for k8s
+
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+apiVersion: v1
+metadata:
+  name: dockerconfigjson-github-com
+  labels:
+    app: app-name
+data:
+  .dockerconfigjson: base64stringofthe .dockerconfigjson
+
+kubectl apply -f dockerconfigjson.yaml
+
+Create a pod or deployment
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: name
+spec:
+  containers:
+  - name: name
+    image: ghcr.io/username/imagename:label
+    imagePullPolicy: Always
+  imagePullSecrets:
+  - name: dockerconfigjson-github-com 
